@@ -53,7 +53,7 @@ def compute_gradient(X, y, w, b):
         f_wb = sigmoid(z_i)
 
         # Calculate the  gradient for b from this example
-        dj_db_i = f_wb - y[i]  # Your code here to calculate the error
+        dj_db_i = f_wb - y[i]
 
         # add that to dj_db
         dj_db += dj_db_i
@@ -67,7 +67,7 @@ def compute_gradient(X, y, w, b):
     return dj_db, dj_dw
 
 
-def gradient_descent(X, y, w_in, b_in, cost_function, gradient_function, alpha, num_iters, lambda_):
+def gradient_descent(X, y, w_in, b_in, alpha, num_iters):
     """
     Performs batch gradient descent to learn theta. Updates theta by taking
     num_iters gradient steps with learning rate alpha
@@ -95,13 +95,13 @@ def gradient_descent(X, y, w_in, b_in, cost_function, gradient_function, alpha, 
     w_history = []
     for i in range(num_iters):
         # Calculate the gradient and update the parameters
-        dj_db, dj_dw = gradient_function(X, y, w_in, b_in, lambda_)
+        dj_db, dj_dw = compute_gradient(X, y, w_in, b_in)
         # Update Parameters using w, b, alpha and gradient
         w_in = w_in - alpha * dj_dw
         b_in = b_in - alpha * dj_db
         # Save cost J at each iteration
         if i < 100000:  # prevent resource exhaustion
-            cost = cost_function(X, y, w_in, b_in, lambda_)
+            cost = compute_cost(X, y, w_in, b_in)
             J_history.append(cost)
 
         # Print cost every at intervals 10 times or as many iterations if < 10
