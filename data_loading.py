@@ -2,8 +2,7 @@ from pathlib import Path
 import pandas as pd
 
 
-def load_and_transform_data(file_path: Path, cols_to_normalise: list, features: list):
-    data_df = pd.read_csv(file_path)
+def load_and_transform_data(data_df: pd.DataFrame, cols_to_normalise: list):
     for col in cols_to_normalise:
         data_df = mean_normalization(data_df=data_df, col_to_normalise=col)
     data_df = convert_sex_to_number(data_df=data_df)
@@ -11,7 +10,6 @@ def load_and_transform_data(file_path: Path, cols_to_normalise: list, features: 
     # I'm going to keep features I think would be most relevant
     # I'm a bit skepctical about fare as we have class, but fare would give more of an insight into how wealthy the passengers were
     data_df.index = data_df["PassengerId"]
-    data_df = data_df.drop(columns=[col for col in data_df.columns.to_list() if col not in features])
     return data_df
 
 
