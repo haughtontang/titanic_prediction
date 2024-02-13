@@ -2,7 +2,7 @@ from pathlib import Path
 import pandas as pd
 
 
-def load_and_transform_data(data_df: pd.DataFrame, cols_to_normalise: list):
+def transform_data(data_df: pd.DataFrame, cols_to_normalise: list):
     for col in cols_to_normalise:
         data_df = mean_normalization(data_df=data_df, col_to_normalise=col)
     data_df = convert_sex_to_number(data_df=data_df)
