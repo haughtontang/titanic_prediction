@@ -3,8 +3,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import StandardScaler
 
-from data_loading import transform_data, get_median_for_entire_data_set
+from data_loading import transform_data, get_median_for_entire_data_set, add_family_size, convert_sex_to_number, convert_location_to_number
 from sklearn.linear_model import LogisticRegression
 
 
@@ -18,6 +19,14 @@ def load_and_transform_data(file_path, cols_to_normalise):
     return transform_data(data_df=data_df, cols_to_normalise=cols_to_normalise)
 
 
+def load_data_skl(file_path: Path):
+    data_df = pd.read_csv(file_path)
+    data_df = convert_sex_to_number(data_df=data_df)
+    data_df = convert_location_to_number(data_df=data_df)
+    data_df.index = data_df["PassengerId"]
+    return add_family_size(data_df=data_df)
+
+
 def return_transformed_params(data_df: pd.DataFrame):
     df_as_dict = convert_df_to_dict(data_df=data_df)
     return np.array(list(df_as_dict.values()))
@@ -25,10 +34,15 @@ def return_transformed_params(data_df: pd.DataFrame):
 
 def main(train_path: Path, test_path: Path, cols_to_normalise: list, features: list):
     # Loading in raw data and transforming
-    train_df = load_and_transform_data(file_path=train_path, cols_to_normalise=cols_to_normalise)
-    test_df = load_and_transform_data(file_path=test_path, cols_to_normalise=cols_to_normalise)
-    train_df, test_df = get_median_for_entire_data_set(test_df=test_df, train_df=train_df)
+    scaler = StandardScaler()
+    # train_df = load_and_transform_data(file_path=train_path, cols_to_normalise=cols_to_normalise)
+    # test_df = load_and_transform_data(file_path=test_path, cols_to_normalise=cols_to_normalise)
+    train_df = load_data_skl(file_path=train_path)
+    test_df = load_data_skl(file_path=test_path)
     test_ids = test_df.index.to_list()
+    for col in features:
+        if col != "Survived":
+            train_df, test_df = get_median_for_entire_data_set(test_df=test_df, train_df=train_df, column_name=col)
 
     train_df = train_df[features]
     features.remove("Survived")
@@ -40,6 +54,9 @@ def main(train_path: Path, test_path: Path, cols_to_normalise: list, features: l
 
     x_train = return_transformed_params(data_df=train_df)
     x_test = return_transformed_params(data_df=test_df)
+
+    x_train = scaler.fit_transform(x_train)
+    x_test = scaler.transform(x_test)
 
     model = LogisticRegression()
     model.fit(x_train, y_train)
@@ -60,5 +77,5 @@ if __name__ == '__main__':
     columns_to_normalise = ["Age", "Fare"]
     # Original list I used
     # features = ['Survived', 'Pclass', 'Sex', 'SibSp', 'Parch', 'Embarked', 'Age_norm', 'Fare_norm']
-    model_features = ['Survived', 'Pclass', 'Sex', 'Age_norm', "family_size"]
+    model_features = ['Survived', 'Pclass', 'Sex', 'Age', "family_size", "Fare", "Embarked"]
     main(train_path=train_file_path, test_path=test_file_path, cols_to_normalise=columns_to_normalise, features=model_features)

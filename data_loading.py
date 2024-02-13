@@ -9,10 +9,12 @@ def transform_data(data_df: pd.DataFrame, cols_to_normalise: list):
         data_df = mean_normalization(data_df=data_df, col_to_normalise=col)
     data_df = convert_sex_to_number(data_df=data_df)
     data_df = convert_location_to_number(data_df=data_df)
-    data_df["family_size"] = data_df["SibSp"] + data_df["Parch"]
-    # I'm going to keep features I think would be most relevant
-    # I'm a bit skepctical about fare as we have class, but fare would give more of an insight into how wealthy the passengers were
+    data_df = add_family_size(data_df=data_df)
     data_df.index = data_df["PassengerId"]
+    return data_df
+
+def add_family_size(data_df: pd.DataFrame):
+    data_df["family_size"] = data_df["SibSp"] + data_df["Parch"]
     return data_df
 
 
@@ -37,9 +39,9 @@ def mean_normalization(data_df: pd.DataFrame, col_to_normalise: str):
     return data_df
 
 
-def get_median_for_entire_data_set(test_df, train_df: pd.DataFrame):
+def get_median_for_entire_data_set(test_df, train_df: pd.DataFrame, column_name: str):
     all_data_df = pd.concat([test_df, train_df])
-    median = np.median(all_data_df["Age_norm"].dropna().to_list())
-    train_df["Age_norm"] = train_df["Age_norm"].replace(np.nan, median)
-    test_df["Age_norm"] = test_df["Age_norm"].replace(np.nan, median)
+    median = np.median(all_data_df[column_name].dropna().to_list())
+    train_df[column_name] = train_df[column_name].replace(np.nan, median)
+    test_df[column_name] = test_df[column_name].replace(np.nan, median)
     return train_df, test_df

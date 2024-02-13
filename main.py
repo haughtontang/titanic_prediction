@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from data_loading import transform_data
+from data_loading import transform_data, get_median_for_entire_data_set
 from model_data import gradient_descent, predict
 
 
@@ -26,6 +26,7 @@ def main(train_path: Path, test_path: Path, cols_to_normalise: list, features: l
     # Loading in raw data and transforming
     train_df = load_and_transform_data(file_path=train_path, cols_to_normalise=cols_to_normalise)
     test_df = load_and_transform_data(file_path=test_path, cols_to_normalise=cols_to_normalise)
+    train_df, test_df = get_median_for_entire_data_set(test_df=test_df, train_df=train_df)
     test_ids = test_df.index.to_list()
 
     train_df = train_df[features]
@@ -51,7 +52,7 @@ def main(train_path: Path, test_path: Path, cols_to_normalise: list, features: l
     for idx, p_id in enumerate(test_ids):
         output_list.append({"PassengerId": p_id, "Survived": survival_prediction_for_test_set[idx]})
     results_df = pd.DataFrame(output_list)
-    results_df.to_csv("/Users/donhaughton/Documents/PycharmProjects/titanic_prediction/data/results.csv", index=False)
+    results_df.to_csv("/Users/donhaughton/Documents/PycharmProjects/titanic_prediction/data/results_dh_version.csv", index=False)
 
 
 if __name__ == '__main__':
