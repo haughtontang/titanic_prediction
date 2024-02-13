@@ -20,7 +20,8 @@ def main(train_path: Path, test_path: Path):
     train_df = load_and_transform_data(data_df=raw_train_df, cols_to_normalise=cols_to_normalise)
     test_df = load_and_transform_data(data_df=raw_test_df, cols_to_normalise=cols_to_normalise)
 
-    features = ['Survived', 'Pclass', 'Sex', 'SibSp', 'Parch', 'Embarked', 'Age_norm', 'Fare_norm']
+    # features = ['Survived', 'Pclass', 'Sex', 'SibSp', 'Parch', 'Embarked', 'Age_norm', 'Fare_norm']
+    features = ['Survived', 'Pclass', 'Sex', 'Age_norm', "Embarked", "family_size"]
     train_df = train_df.drop(columns=[col for col in train_df.columns.to_list() if col not in features])
     features.remove("Survived")
     test_df = test_df.drop(columns=[col for col in test_df.columns.to_list() if col not in features])

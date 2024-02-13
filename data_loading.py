@@ -7,6 +7,7 @@ def load_and_transform_data(data_df: pd.DataFrame, cols_to_normalise: list):
         data_df = mean_normalization(data_df=data_df, col_to_normalise=col)
     data_df = convert_sex_to_number(data_df=data_df)
     data_df = convert_location_to_number(data_df=data_df)
+    data_df["family_size"] = data_df["SibSp"] + data_df["Parch"]
     # I'm going to keep features I think would be most relevant
     # I'm a bit skepctical about fare as we have class, but fare would give more of an insight into how wealthy the passengers were
     data_df.index = data_df["PassengerId"]
