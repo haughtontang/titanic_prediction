@@ -1,4 +1,6 @@
 from pathlib import Path
+
+import numpy as np
 import pandas as pd
 
 
@@ -33,3 +35,11 @@ def mean_normalization(data_df: pd.DataFrame, col_to_normalise: str):
     divider = max(col_data) - min(col_data)
     data_df[f"{col_to_normalise}_norm"] = (col_data - col_mean) / divider
     return data_df
+
+
+def get_median_for_entire_data_set(test_df, train_df: pd.DataFrame):
+    all_data_df = pd.concat([test_df, train_df])
+    median = np.median(all_data_df["Age_norm"].dropna().to_list())
+    train_df["Age_norm"] = train_df["Age_norm"].replace(np.nan, median)
+    test_df["Age_norm"] = test_df["Age_norm"].replace(np.nan, median)
+    return train_df, test_df
