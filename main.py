@@ -26,7 +26,7 @@ def main(train_path: Path, test_path: Path):
     test_df = test_df.drop(columns=[col for col in test_df.columns.to_list() if col not in features])
     # Some people are missing an age so I'm going to drop these for now - if it has a big impact I could replace nan values with an average
     train_df = train_df.dropna(how="any")
-    test_df = test_df.dropna(how="any")
+    # test_df = test_df.dropna(how="any")
     y_train = np.array(train_df["Survived"].to_list())
     train_df.drop(columns=["Survived"], inplace=True)
 
