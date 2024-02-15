@@ -45,3 +45,19 @@ def get_median_for_entire_data_set(test_df, train_df: pd.DataFrame, column_name:
     train_df[column_name] = train_df[column_name].replace(np.nan, median)
     test_df[column_name] = test_df[column_name].replace(np.nan, median)
     return train_df, test_df
+
+
+def add_deck(data_df: pd.DataFrame):
+    # I used this resource where some did an analysis of the decks among other things.
+    # I will use this to add a newx feature https://www.kaggle.com/code/gunesevitan/titanic-advanced-feature-engineering-tutorial
+    cabin_to_deck = {"A": 1, "B": 1, "C": 1, "D": 2, "E": 2, "F": 3, "G": 3, np.nan: 4, "T": 1}
+    cabins = []
+    for i in data_df["Cabin"].to_list():
+        if isinstance(i, str):
+            first_letter = i[0]
+            deck = cabin_to_deck[first_letter]
+        else:
+            deck = cabin_to_deck[i]
+        cabins.append(deck)
+    data_df["Deck"] = cabins
+    return data_df
