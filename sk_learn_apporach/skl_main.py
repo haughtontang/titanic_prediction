@@ -5,7 +5,7 @@ import pandas as pd
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
 
-from data_loading import transform_data, get_median_for_entire_data_set, add_family_size, convert_sex_to_number, convert_location_to_number, add_deck
+from data_loading import transform_data, get_median_for_entire_data_set, add_family_size, convert_sex_to_number, convert_location_to_number
 from sklearn.linear_model import LogisticRegression
 
 
@@ -23,7 +23,6 @@ def load_data_skl(file_path: Path):
     data_df = pd.read_csv(file_path)
     data_df = convert_sex_to_number(data_df=data_df)
     data_df = convert_location_to_number(data_df=data_df)
-    data_df = add_deck(data_df=data_df)
     data_df.index = data_df["PassengerId"]
     return add_family_size(data_df=data_df)
 
@@ -36,11 +35,8 @@ def return_transformed_params(data_df: pd.DataFrame):
 def main(train_path: Path, test_path: Path, cols_to_normalise: list, features: list):
     # Loading in raw data and transforming
     scaler = StandardScaler()
-    # train_df = load_and_transform_data(file_path=train_path, cols_to_normalise=cols_to_normalise)
-    # test_df = load_and_transform_data(file_path=test_path, cols_to_normalise=cols_to_normalise)
     train_df = load_data_skl(file_path=train_path)
     test_df = load_data_skl(file_path=test_path)
-    features.remove("Cabin")
     test_ids = test_df.index.to_list()
     for col in features:
         if col != "Survived":
@@ -79,5 +75,5 @@ if __name__ == '__main__':
     columns_to_normalise = ["Age", "Fare"]
     # Original list I used
     # features = ['Survived', 'Pclass', 'Sex', 'SibSp', 'Parch', 'Embarked', 'Age_norm', 'Fare_norm']
-    model_features = ['Survived', 'Pclass', 'Sex', 'Age', "family_size", "Fare", "Embarked", "Cabin", "Deck"]
+    model_features = ['Survived', 'Pclass', 'Sex', 'Age', "family_size", "Fare", "Embarked"]
     main(train_path=train_file_path, test_path=test_file_path, cols_to_normalise=columns_to_normalise, features=model_features)
